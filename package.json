@@ -1,8 +1,8 @@
 {
-  "name": "covid",
+  "name": "spacer",
   "version": "0.0.0",
   "private": true,
-  "description": "Small description for covid goes here",
+  "description": "Small description for spacer goes here",
   "repository": "",
   "license": "MIT",
   "author": "",
@@ -28,19 +28,26 @@
     "ember-cli-app-version": "^3.2.0",
     "ember-cli-babel": "^7.17.2",
     "ember-cli-dependency-checker": "^3.2.0",
+    "ember-cli-dotenv": "^3.0.1",
     "ember-cli-eslint": "^5.1.0",
     "ember-cli-htmlbars": "^4.2.2",
     "ember-cli-inject-live-reload": "^2.0.2",
+    "ember-cli-postcss": "^5.0.0",
     "ember-cli-sri": "^2.1.1",
     "ember-cli-template-lint": "^1.0.0-beta.3",
     "ember-cli-uglify": "^3.0.0",
+    "ember-cordova-events": "^0.1.3",
+    "ember-cordova-platform": "^0.1.1",
+    "ember-cordova-splash": "^0.1.9",
     "ember-data": "~3.16.0",
     "ember-export-application-global": "^2.0.1",
     "ember-fetch": "^7.0.0",
+    "ember-firebase-service": "^6.0.4",
     "ember-load-initializers": "^2.1.1",
     "ember-maybe-import-regenerator": "^0.1.6",
     "ember-qunit": "^4.6.0",
     "ember-resolver": "^7.0.0",
+    "ember-simple-auth": "^3.0.0",
     "ember-source": "~3.16.0",
     "ember-welcome-page": "^4.0.0",
     "eslint-plugin-ember": "^7.7.2",
@@ -53,5 +60,13 @@
   },
   "ember": {
     "edition": "octane"
+  },
+  "dependencies": {
+    "@tailwindcss/ui": "^0.1.3",
+    "advlib": "^0.1.4",
+    "corber": "^1.4.2",
+    "corber-ember-livereload": "0.0.2",
+    "firebase": "^7.12.0",
+    "tailwindcss": "^1.2.0"
   }
 }

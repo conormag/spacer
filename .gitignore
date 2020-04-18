@@ -18,8 +18,19 @@
 /npm-debug.log*
 /testem.log
 /yarn-error.log
+.DS_Store
 
 # ember-try
 /.node_modules.ember-try/
 /bower.json.ember-try
 /package.json.ember-try
+
+# corber stuff
+corber/tmp-livereload
+corber/cordova/node_modules
+corber/cordova/platforms/*
+!corber/cordova/platforms/.gitkeep
+corber/cordova/plugins/*
+!corber/cordova/plugins/.gitkeep
+corber/cordova/www/*
+!corber/cordova/www/.gitkeep

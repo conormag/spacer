@@ -1,0 +1,40 @@
+<h3>Advertising: {{this.bluetooth.advertisingStatus}}</h3>
+<h3>STATUS: {{this.scanStatus}} </h3>
+<div>
+  <span class="inline-flex rounded-md shadow-sm">
+    <button 
+    {{on "click" this.startScan}}
+    type="button" class="inline-flex items-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition ease-in-out duration-150">
+      Start Scan
+    </button>
+  </span>
+
+  <span class="inline-flex rounded-md shadow-sm">
+    <button 
+      {{on "click" this.stopScan}}
+      type="button" 
+      class="inline-flex items-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition ease-in-out duration-150">
+        Stop Scan
+    </button>
+  </span>
+</div>
+<ul>
+  {{#each devices as |device|}}
+    <li>
+      <div class="bg-white overflow-hidden shadow sm:rounded-lg">
+        <div class="border-b border-gray-200 px-4 py-5 sm:px-6">
+          {{if device.name device.name "Un-named Device"}}
+        </div>
+        <div class="px-4 py-5 sm:p-6">
+            address: {{device.address}}<br>
+            rssi: {{device.rssi}}<br>
+            mode: {{device.modeSignal}}<br>
+            txPowerLevels: {{device.txPowerLevel}}
+            distance: {{device.distance}}m
+        </div>
+      </div>
+    </li>
+  {{/each}}
+</ul>
+
+{{yield}}

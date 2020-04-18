@@ -5,7 +5,18 @@ const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 module.exports = function(defaults) {
   let app = new EmberApp(defaults, {
     // Add options here
+    postcssOptions: {
+      compile: {
+        plugins: [
+          require('tailwindcss')('./config/tailwind.config.js')
+        ]
+      }
+    }
   });
+
+  app.import('node_modules/firebase/firebase-functions.js');
+  app.import('node_modules/firebase/firebase-messaging.js');
+  app.import('node_modules/firebase/firebase-storage.js');
 
   // Use `app.import` to add additional libraries to the generated
   // output files.
