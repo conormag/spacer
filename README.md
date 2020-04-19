@@ -7,6 +7,7 @@ A short introduction of this app could easily go here.
 
 You will need the following things properly installed on your computer.
 
+* [Corber](http://corber.io) 
 * [Git](https://git-scm.com/)
 * [Node.js](https://nodejs.org/) (with npm)
 * [Ember CLI](https://ember-cli.com/)
@@ -18,7 +19,34 @@ You will need the following things properly installed on your computer.
 * `cd spacer`
 * `npm install`
 
+No need to do corber init. but do run `corber prepare`
+
 ## Running / Development
+
+for the mobile app, you can build it and then deploy to your device
+
+Android
+-------
+
+
+```corber build --environment=development --platform=android```
+
+and then 
+
+```corber proxy run android --device```
+
+IOS
+---
+```corber build --environment=development --platform=android```
+
+and then
+
+try run from xcode.
+
+you can also live reload build it, by using corerb serve before deployment to device
+
+```corber serve --environment=development --platform=android```
+
 
 * `ember serve`
 * Visit your app at [http://localhost:4200](http://localhost:4200).

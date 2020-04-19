@@ -122,6 +122,7 @@ export default class Device {
   get distance() {
     let N =2;
     let measuredPower = -65+this.txPowerLevel;
+    // 65 seems to work well
     measuredPower = -65;
     let distance = Math.pow(10,( measuredPower - this.modeSignal)/(10 * N));
     return distance;
