@@ -6,6 +6,7 @@ import Device from '../classes/device';
 import DeviceTracker from '../classes/devicetracker';
 
 const POLLING_INTERVAL = 5000;
+const MAX_DISTANCE = 2;
 
 export default class BleComponent extends Component {
 
@@ -72,11 +73,12 @@ export default class BleComponent extends Component {
     if(!this.devices) {
       return;
     }
-    const devicesInDistance = this.devices.filter(device => device.distance <= 2);
+    const devicesInDistance = this.devices.filter(device => device.distance <= MAX_DISTANCE);
     this.deviceTracker.update(devicesInDistance, POLLING_INTERVAL);
     if (this.deviceTracker.isViolated(devicesInDistance)) {
       this.bluetooth.warn();
     }
+
   }
 
   @action
