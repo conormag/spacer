@@ -3,6 +3,9 @@ import { tracked } from '@glimmer/tracking';
 import { action, set } from '@ember/object';
 import {inject as service} from '@ember/service';
 import Device from '../classes/device';
+import DeviceTracker from '../classes/devicetracker';
+
+const POLLING_INTERVAL = 5000;
 
 export default class BleComponent extends Component {
 
@@ -12,7 +15,13 @@ export default class BleComponent extends Component {
   @tracked scanStatus;
   @tracked advertisingStatus;
   @tracked devices = [];
+  @tracked distanceIntervalId;
+  @tracked deviceTracker;
 
+  constructor() {
+    super(...arguments);
+    this.deviceTracker = new DeviceTracker();
+  }
 
   async handlePermissions() {
     bluetoothle.hasPermission((status) => {
@@ -59,9 +68,19 @@ export default class BleComponent extends Component {
     this.bluetooth.log({level:'error', msg:scanResult})
   }
 
+  warnOnViolation() {
+    if(!this.devices) {
+      return;
+    }
+    const devicesInDistance = this.devices.filter(device => device.distance <= 2);
+    this.deviceTracker.update(devicesInDistance, POLLING_INTERVAL);
+    if (this.deviceTracker.isViolated(devicesInDistance)) {
+      this.bluetooth.warn();
+    }
+  }
+
   @action
   startScan() {
-    //this.bluetooth.warn();
     this.handlePermissions();
 
     let params = {
@@ -70,11 +89,16 @@ export default class BleComponent extends Component {
     }
 
     this.bluetooth.startScan(this.processScan, this.processScanError, params)
+
+    this.distanceIntervalId = setInterval(() => {
+      this.warnOnViolation();
+    }, POLLING_INTERVAL);
   }
 
 
   @action
   async stopScan() {
+    clearInterval(this.distanceIntervalId);
     try {
       let result = await this.bluetooth.stopScan();
       this.scanStatus = result.status;

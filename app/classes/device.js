@@ -110,8 +110,7 @@ export default class Device {
 
     var processedPacket = ble.data.process(asHex);
 
-    console.log(processedPacket.txPower);
-    let txPower=Number(processedPacket.txPower.split('dBm')[0] )
+    let txPower = processedPacket.txPower ? Number(processedPacket.txPower.split('dBm')[0]) : 0;
     return txPower;
   }
 
