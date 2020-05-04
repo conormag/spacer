@@ -18,6 +18,7 @@ export default class BleComponent extends Component {
   @tracked devices = [];
   @tracked distanceIntervalId;
   @tracked deviceTracker;
+  @tracked isWarnOn = false;
 
   constructor() {
     super(...arguments);
@@ -75,10 +76,10 @@ export default class BleComponent extends Component {
     }
     const devicesInDistance = this.devices.filter(device => device.distance <= MAX_DISTANCE);
     this.deviceTracker.update(devicesInDistance, POLLING_INTERVAL);
-    if (this.deviceTracker.isViolated(devicesInDistance)) {
+    this.isWarnOn = this.deviceTracker.isViolated(devicesInDistance);
+    if (this.isWarnOn) {
       this.bluetooth.warn();
     }
-
   }
 
   @action
@@ -101,6 +102,7 @@ export default class BleComponent extends Component {
   @action
   async stopScan() {
     clearInterval(this.distanceIntervalId);
+    this.isWarnOn = false;
     try {
       let result = await this.bluetooth.stopScan();
       this.scanStatus = result.status;
