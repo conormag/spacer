@@ -1,11 +1,10 @@
 import { tracked } from '@glimmer/tracking';
 import { A } from '@ember/array';
-import { get } from '@ember/object'
-import {inject as service} from '@ember/service';
-import {ble} from 'advlib'
+import { get } from '@ember/object';
+import { inject as service } from '@ember/service';
+import { ble } from 'advlib';
 
 export default class Device {
-
   @service('ember-cordova/platform') platform;
 
   constructor(obj) {
@@ -17,18 +16,17 @@ export default class Device {
 
   @tracked _rssiStates = A([]);
 
-
   set rssi(signalVal) {
     this._rssiStates.pushObject({
       signal: signalVal,
-      time: Date.now()
+      time: Date.now(),
     });
   }
 
-
   get rssi() {
-    return this._rssiStates.length > 0 ?
-      this._rssiStates.slice(-1)[0].signal : 0;
+    return this._rssiStates.length > 0
+      ? this._rssiStates.slice(-1)[0].signal
+      : 0;
   }
 
   /*
@@ -41,9 +39,9 @@ export default class Device {
     const MAX_TIME = 15 * 60 * 1000; // 15 mins
     const forTime = time ? time * 1000 : MAX_TIME;
     const start = Date.now() - forTime;
-    let validA = this._rssiStates.filter(el => el.time > start);
-    let total =  validA.reduce((total, obj) => total + Number(obj.signal), 0);
-    return total < 0 ? Math.ceil(total/validA.length) : 0;
+    let validA = this._rssiStates.filter((el) => el.time > start);
+    let total = validA.reduce((total, obj) => total + Number(obj.signal), 0);
+    return total < 0 ? Math.ceil(total / validA.length) : 0;
   }
 
   get averageSignal() {
@@ -58,21 +56,20 @@ export default class Device {
     const MAX_TIME = 15 * 60 * 1000; // 15 mins
     const forTime = time ? time * 1000 : MAX_TIME;
     const start = Date.now() - forTime;
-    let validA = this._rssiStates.filter(el => el.time > start);
+    let validA = this._rssiStates.filter((el) => el.time > start);
     let mode = Object.values(
-        validA.reduce((count, e) => {
-          let signal = e.signal;
-          if (!(signal in count)) {
-            count[signal] = [0, signal];
-          }
-          count[signal][0]++;
-          return count;
-        }, {})
-      ).reduce((a, v) => v[0] < a[0] ? a : v, [0, null])[1];
+      validA.reduce((count, e) => {
+        let signal = e.signal;
+        if (!(signal in count)) {
+          count[signal] = [0, signal];
+        }
+        count[signal][0]++;
+        return count;
+      }, {})
+    ).reduce((a, v) => (v[0] < a[0] ? a : v), [0, null])[1];
 
     return mode;
   }
-
 
   get modeSignal() {
     return this.getModeSignal(30);
@@ -86,8 +83,7 @@ export default class Device {
     function encodedStringToBytes(string) {
       var data = atob(string);
       var bytes = new Uint8Array(data.length);
-      for (var i = 0; i < bytes.length; i++)
-      {
+      for (let i = 0; i < bytes.length; i++) {
         bytes[i] = data.charCodeAt(i);
       }
       return bytes;
@@ -98,33 +94,38 @@ export default class Device {
       let result = '';
       for (let i = 0; i < raw.length; i++) {
         const hex = raw.charCodeAt(i).toString(16);
-        result += (hex.length === 2 ? hex : '0' + hex);
+        result += hex.length === 2 ? hex : '0' + hex;
       }
       return result.toUpperCase();
     }
-    
 
     // android decode the advertisement
-    let uint8arr = encodedStringToBytes(this.advertisement);
-    let asHex = base64ToHex(this.advertisement);
+    // https://www.npmjs.com/package/cordova-plugin-bluetoothle#startscan
+    const ad =
+      typeof this.advertisement === 'string'
+        ? this.advertisement // android
+        : this.advertisement.manufacturerData; // ios
+
+    let uint8arr = encodedStringToBytes(ad);
+    let asHex = base64ToHex(ad);
 
     var processedPacket = ble.data.process(asHex);
 
-    let txPower = processedPacket.txPower ? Number(processedPacket.txPower.split('dBm')[0]) : 0;
+    let txPower = processedPacket.txPower
+      ? Number(processedPacket.txPower.split('dBm')[0])
+      : 0;
     return txPower;
   }
-
 
   /*
   https://iotandelectronics.wordpress.com/2016/10/07/how-to-calculate-distance-from-the-rssi-value-of-the-ble-beacon/
   */
   get distance() {
-    let N =2;
-    let measuredPower = -65+this.txPowerLevel;
+    let N = 2;
+    let measuredPower = -65 + this.txPowerLevel;
     // 65 seems to work well
     measuredPower = -65;
-    let distance = Math.pow(10,( measuredPower - this.modeSignal)/(10 * N));
+    let distance = Math.pow(10, (measuredPower - this.modeSignal) / (10 * N));
     return distance;
   }
-  
 }
