@@ -121,11 +121,16 @@ export default class Device {
   https://iotandelectronics.wordpress.com/2016/10/07/how-to-calculate-distance-from-the-rssi-value-of-the-ble-beacon/
   */
   get distance() {
-    let N = 2;
-    let measuredPower = -65 + this.txPowerLevel;
-    // 65 seems to work well
-    measuredPower = -65;
-    let distance = Math.pow(10, (measuredPower - this.modeSignal) / (10 * N));
+    let distance;
+    try {
+      let N = 2;
+      let measuredPower = -65 + this.txPowerLevel;
+      // 65 seems to work well
+      measuredPower = -65;
+      distance = Math.pow(10, (measuredPower - this.modeSignal) / (10 * N));
+    } catch (err) {
+      distance = 100; // skip devices with invalid distance
+    }
     return distance;
   }
 }

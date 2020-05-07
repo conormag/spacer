@@ -74,16 +74,9 @@ export default class BleComponent extends Component {
     if (!this.devices) {
       return;
     }
-    const devicesInDistance = this.devices.filter((device) => {
-      let distance = 0;
-      // in ios invalid character error can be thrown so try-catch is needed
-      try {
-        distance = device.distance;
-      } catch (err) {
-        distance = 100; // skip devices with invalid distance
-      }
-      return distance < MAX_DISTANCE;
-    });
+    const devicesInDistance = this.devices.filter(
+      (device) => device.distance <= MAX_DISTANCE
+    );
     this.deviceTracker.update(devicesInDistance, POLLING_INTERVAL);
     this.isWarnOn = this.deviceTracker.isViolated(devicesInDistance);
     if (this.isWarnOn) {
