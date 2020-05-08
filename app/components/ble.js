@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { action, set } from '@ember/object';
-import {inject as service} from '@ember/service';
+import { inject as service } from '@ember/service';
 import Device from '../classes/device';
 import DeviceTracker from '../classes/devicetracker';
 
@@ -9,7 +9,6 @@ const POLLING_INTERVAL = 5000;
 const MAX_DISTANCE = 2;
 
 export default class BleComponent extends Component {
-
   //@service('ember-cordova/events') events;
   @service bluetooth;
 
@@ -18,6 +17,8 @@ export default class BleComponent extends Component {
   @tracked devices = [];
   @tracked distanceIntervalId;
   @tracked deviceTracker;
+  @tracked isWarnOn = false;
+  @tracked deviceIntervalId;
 
   constructor() {
     super(...arguments);
@@ -28,7 +29,10 @@ export default class BleComponent extends Component {
     bluetoothle.hasPermission((status) => {
       if (status.hasPermssion) {
       } else {
-        bluetoothle.requestPermission(() => {}, () => {});
+        bluetoothle.requestPermission(
+          () => {},
+          () => {}
+        );
       }
     });
   }
@@ -40,8 +44,7 @@ export default class BleComponent extends Component {
   }
 
   addDevice(scanObject) {
-
-    let obj = this.devices.findBy('address',scanObject.address)
+    let obj = this.devices.findBy('address', scanObject.address);
 
     if (obj) {
       set(obj, 'rssi', scanObject.rssi);
@@ -52,33 +55,33 @@ export default class BleComponent extends Component {
 
       // need to re-bang the whole array for the observer to pick it up
       // check this out in ember octane docs
-      this.devices = [...this.devices, d]; 
-
+      this.devices = [...this.devices, d];
     }
-
   }
 
   processScan = (scanResult) => {
     this.scanStatus = scanResult.status;
     if (scanResult.status === 'scanResult') {
-      this.addDevice(scanResult)
+      this.addDevice(scanResult);
     }
-  }
+  };
 
   processScanError = (scanResult) => {
-    this.bluetooth.log({level:'error', msg:scanResult})
-  }
+    this.bluetooth.log({ level: 'error', msg: scanResult });
+  };
 
   warnOnViolation() {
-    if(!this.devices) {
+    if (!this.devices) {
       return;
     }
-    const devicesInDistance = this.devices.filter(device => device.distance <= MAX_DISTANCE);
+    const devicesInDistance = this.devices.filter(
+      (device) => device.distance <= MAX_DISTANCE
+    );
     this.deviceTracker.update(devicesInDistance, POLLING_INTERVAL);
-    if (this.deviceTracker.isViolated(devicesInDistance)) {
+    this.isWarnOn = this.deviceTracker.isViolated(devicesInDistance);
+    if (this.isWarnOn) {
       this.bluetooth.warn();
     }
-
   }
 
   @action
@@ -87,16 +90,15 @@ export default class BleComponent extends Component {
 
     let params = {
       services: [],
-      allowDuplicates: true
-    }
+      allowDuplicates: true,
+    };
 
-    this.bluetooth.startScan(this.processScan, this.processScanError, params)
+    this.bluetooth.startScan(this.processScan, this.processScanError, params);
 
     this.distanceIntervalId = setInterval(() => {
       this.warnOnViolation();
     }, POLLING_INTERVAL);
   }
-
 
   @action
   async stopScan() {
@@ -105,9 +107,9 @@ export default class BleComponent extends Component {
       let result = await this.bluetooth.stopScan();
       this.scanStatus = result.status;
       this.devices = []; //reset the device list
-      this.bluetooth.log({level:'info', msg:result.status});
+      this.bluetooth.log({ level: 'info', msg: result.status });
     } catch (e) {
-     this.bluetooth.log({level:'error', msg:e.status})
+      this.bluetooth.log({ level: 'error', msg: e.status });
     }
   }
 }
