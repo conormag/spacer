@@ -72,7 +72,7 @@ export default class BleComponent extends Component {
     this.bluetooth.log({ level: 'error', msg: scanResult });
   };
 
-  warnOnViolation() {
+  handleDevicesInDistance() {
     if (!this.devices) {
       return;
     }
@@ -82,7 +82,7 @@ export default class BleComponent extends Component {
     this.deviceTracker.update(this.devicesInDistance, POLLING_INTERVAL);
     this.isWarnOn = this.deviceTracker.isViolated(this.devicesInDistance);
     if (this.isWarnOn) {
-      // this.bluetooth.warn();
+      this.bluetooth.warn();
     }
     const trackedDevices = this.deviceTracker.devices;
 
@@ -108,7 +108,7 @@ export default class BleComponent extends Component {
     this.bluetooth.startScan(this.processScan, this.processScanError, params);
 
     this.distanceIntervalId = setInterval(() => {
-      this.warnOnViolation();
+      this.handleDevicesInDistance();
     }, POLLING_INTERVAL);
     this.isScanning = true;
   }

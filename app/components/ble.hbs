@@ -2,11 +2,11 @@
 
   {{#if isScanning}}
   {{#if devicesInDistance.length}}
-  <article class="text-center">
-    <h2>High Risk</h2>
-    <img src="high-risk.svg" class="object-contain h-48" />
-    <h3>Move to a safe distance</h3>
-    <h3>Nearby devices detected</h3>
+  <article class="mx-12 text-center flex flex-col justify-center items-center">
+    <h2 class="text-2xl my-4 text-gray-900">High Risk</h2>
+    <h3 class="my-4">Move to a safe distance</h3>
+    {{inline-svg "high-risk.svg" class="h-32 w-32"}}
+    <h3 class="my-4">Nearby devices detected</h3>
   </article>
   <ul>
     {{#each devicesInDistance as |device|}}
@@ -26,19 +26,22 @@
     </li>
     {{/each}}
   </ul>
+
   {{else}}
-  <article class="text-center">
-    <h2>Low Risk</h2>
-    <h3>No nearby devices detected</h3>
+  <article class="mx-12 text-center flex flex-col justify-center items-center">
+    <h2 class="text-2xl my-4 text-gray-900">Low Risk</h2>
+    <h3 class="my-4">Maintain a safe distance from others</h3>
+    {{inline-svg "clipboard.svg" class="h-32 w-32"}}
+    <h3 class="my-4">No nearby devices detected</h3>
   </article>
   {{/if}}
 
   {{else}}
-  <article class="text-center">
-    <h2>Reduce the spread of Covid-19</h2>
-    <h3>Scan for nearby devices</h3>
+  <article class="mx-12 text-center flex flex-col justify-center items-center">
+    <h2 class="text-2xl my-4 text-gray-900">Reduce the spread of Covid-19</h2>
+    {{inline-svg "crowded.svg" class="h-32 w-32"}}
+    <h3 class="my-4">Scan for nearby devices</h3>
   </article>
-
   {{/if}}
 
 
