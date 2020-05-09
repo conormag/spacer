@@ -1,26 +1,31 @@
 {{!-- The following component displays Ember's default welcome message. --}}
-<div class="min-h-screen bg-white">
+<div class="h-full bg-white">
 
   {{!-- <MainNav /> --}}
 
-  <div class="py-10">
-    <header>
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-3xl font-bold leading-tight text-gray-900">
-          {{this.settings.title}}
-        </h2>
-      </div>
-    </header>
-    <main>
-      <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="px-4 py-8 sm:px-0">
-          <div class="rounded-lg h-96">
-            <Ble />
-            {{outlet}}
-          </div>
-        </div>
-      </div>
+  <div class="container min-h-screen">
+    <nav class="text-center p-5 border-b-2">
+      <span class="font-semibold text-xl tracking-tight">{{this.settings.title}}</span>
+    </nav>
+    <main class="px-4 py-8 overflow-y-auto" style="height: 75vh;">
+      <Ble />
+      {{outlet}}
     </main>
+    <footer class="border-t-2">
+      <ul class="flex flex-1 justify-between">
+        <li class="flex-1 m-4">
+          <a class="text-center block border border-blue-500 rounded py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white"
+            href="#">Active</a>
+        </li>
+        <li class="flex-1 m-4">
+          <a class="text-center block border border-white rounded hover:border-gray-200 text-blue-500 hover:bg-gray-200 py-2 px-4"
+            href="#">Nav</a>
+        </li>
+        <li class="flex-1 m-4">
+          <a class="block py-2 px-4 text-gray-400 cursor-not-allowed" href="#">Disabled</a>
+        </li>
+      </ul>
+    </footer>
   </div>
 </div>
 

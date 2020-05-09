@@ -80,7 +80,7 @@ export default class BleComponent extends Component {
     this.deviceTracker.update(devicesInDistance, POLLING_INTERVAL);
     this.isWarnOn = this.deviceTracker.isViolated(devicesInDistance);
     if (this.isWarnOn) {
-      this.bluetooth.warn();
+      // this.bluetooth.warn();
     }
   }
 
