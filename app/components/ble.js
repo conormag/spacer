@@ -19,6 +19,8 @@ export default class BleComponent extends Component {
   @tracked deviceTracker;
   @tracked isWarnOn = false;
   @tracked deviceIntervalId;
+  @tracked isScanning = false;
+  @tracked devicesInDistance = [];
 
   constructor() {
     super(...arguments);
@@ -74,14 +76,24 @@ export default class BleComponent extends Component {
     if (!this.devices) {
       return;
     }
-    const devicesInDistance = this.devices.filter(
-      (device) => device.distance <= MAX_DISTANCE
+    this.devicesInDistance = this.devices.filter(
+      (device) => device.distance && device.distance <= MAX_DISTANCE
     );
-    this.deviceTracker.update(devicesInDistance, POLLING_INTERVAL);
-    this.isWarnOn = this.deviceTracker.isViolated(devicesInDistance);
+    this.deviceTracker.update(this.devicesInDistance, POLLING_INTERVAL);
+    this.isWarnOn = this.deviceTracker.isViolated(this.devicesInDistance);
     if (this.isWarnOn) {
       // this.bluetooth.warn();
     }
+    const trackedDevices = this.deviceTracker.devices;
+
+    this.devicesInDistance = this.devicesInDistance.map((device) => ({
+      ...device,
+      name: device.name || device.address,
+      distance: device.distance.toFixed(2),
+      timeInDanger: trackedDevices[device.address].trackedTime
+        ? trackedDevices[device.address].trackedTime / 1000
+        : 0,
+    }));
   }
 
   @action
@@ -98,11 +110,13 @@ export default class BleComponent extends Component {
     this.distanceIntervalId = setInterval(() => {
       this.warnOnViolation();
     }, POLLING_INTERVAL);
+    this.isScanning = true;
   }
 
   @action
   async stopScan() {
     clearInterval(this.distanceIntervalId);
+    this.isScanning = false;
     try {
       let result = await this.bluetooth.stopScan();
       this.scanStatus = result.status;
