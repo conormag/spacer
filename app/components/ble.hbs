@@ -1,4 +1,6 @@
-<main class="px-4 py-8 overflow-y-auto " style="height: 75vh;">
+<main
+  class="px-4 py-8 overflow-y-auto {{if isScanning (if devicesInDistance.length 'bg-red-200' 'bg-green-100') 'bg-yellow-100' }}"
+  style="height: 75vh;">
 
   {{#if isScanning}}
   {{#if devicesInDistance.length}}
@@ -10,7 +12,7 @@
   </article>
   <ul>
     {{#each devicesInDistance as |device|}}
-    <li class="my-4 bg-white overflow-hidden shadow sm:rounded-lg">
+    <li class="my-4 bg-white overflow-hidden shadow sm:rounded-lg bg-red-200">
       <article class="px-4 py-5 sm:p-6">
         <p class="font-bold text-gray-900">
           {{ device.name }}
