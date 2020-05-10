@@ -7,6 +7,11 @@ import DeviceTracker from '../classes/devicetracker';
 
 const POLLING_INTERVAL = 5000;
 const MAX_DISTANCE = 2;
+const PAUSE_TIME = 30000;
+const SCAN_PARAMS = {
+  services: [],
+  allowDuplicates: true,
+};
 
 export default class BleComponent extends Component {
   //@service('ember-cordova/events') events;
@@ -17,9 +22,9 @@ export default class BleComponent extends Component {
   @tracked devices = [];
   @tracked distanceIntervalId;
   @tracked deviceTracker;
-  @tracked isWarnOn = false;
-  @tracked deviceIntervalId;
   @tracked isScanning = false;
+  @tracked isPaused = false;
+  @tracked pauseId;
   @tracked devicesInDistance = [];
 
   constructor() {
@@ -80,8 +85,8 @@ export default class BleComponent extends Component {
       (device) => device.distance && device.distance <= MAX_DISTANCE
     );
     this.deviceTracker.update(this.devicesInDistance, POLLING_INTERVAL);
-    this.isWarnOn = this.deviceTracker.isViolated(this.devicesInDistance);
-    if (this.isWarnOn) {
+    const isWarnOn = this.deviceTracker.isViolated(this.devicesInDistance);
+    if (isWarnOn) {
       this.bluetooth.warn();
     }
 
@@ -92,14 +97,14 @@ export default class BleComponent extends Component {
 
   @action
   startScan() {
+    this.isPaused = false;
+
     this.handlePermissions();
-
-    let params = {
-      services: [],
-      allowDuplicates: true,
-    };
-
-    this.bluetooth.startScan(this.processScan, this.processScanError, params);
+    this.bluetooth.startScan(
+      this.processScan,
+      this.processScanError,
+      SCAN_PARAMS
+    );
 
     this.distanceIntervalId = setInterval(() => {
       this.handleDevicesInDistance();
@@ -108,9 +113,24 @@ export default class BleComponent extends Component {
   }
 
   @action
+  async pauseScan() {
+    try {
+      await this.stopScan();
+      this.isScanning = true;
+      this.isPaused = true;
+      clearTimeout(this.pauseId);
+      this.pauseId = setTimeout(() => this.startScan(), PAUSE_TIME);
+    } catch (e) {
+      this.bluetooth.log({ level: 'error', msg: e.status });
+    }
+  }
+
+  @action
   async stopScan() {
     clearInterval(this.distanceIntervalId);
+    clearTimeout(this.pauseId);
     this.isScanning = false;
+    this.isPaused = false;
     try {
       let result = await this.bluetooth.stopScan();
       this.scanStatus = result.status;
