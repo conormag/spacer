@@ -4,48 +4,41 @@
 
   {{#if isScanning}}
   {{#if devicesInDistance.length}}
+  {{!-- High risk screen --}}
   <article class="mx-12 text-center flex flex-col justify-center items-center">
-    <h2 class="text-2xl my-4 text-gray-900">High Risk</h2>
-    <h3 class="my-4">Move to a safe distance</h3>
+    <h2 class="text-2xl my-4 text-gray-900">Bluetooth Devices Detected</h2>
     {{inline-svg "high-risk.svg" class="h-32 w-32"}}
-    <h3 class="my-4">Nearby devices detected</h3>
+    <h3 class="my-4">Space Out</h3>
   </article>
   <ul>
     {{#each devicesInDistance as |device|}}
-    <li class="my-4 bg-white overflow-hidden shadow sm:rounded-lg bg-red-200">
-      <article class="px-4 py-5 sm:p-6">
-        <p class="font-bold text-gray-900">
-          {{ device.name }}
-        </p>
-        <p class="text-sm text-gray-700">
-          Distance: {{ device.distance }} m
-        </p>
-        <p class="text-sm text-gray-700">
-          Time in danger: {{ device.timeInDanger }} s
-        </p>
-      </article>
-
+    <li class="my-4 bg-white overflow-hidden bg-red-200">
+      <p class="px-4 text-gray-900">
+        {{ device.name }}
+      </p>
     </li>
     {{/each}}
   </ul>
 
   {{else}}
+  {{!-- Low risk screen --}}
   <article class="mx-12 text-center flex flex-col justify-center items-center">
-    <h2 class="text-2xl my-4 text-gray-900">Low Risk</h2>
-    <h3 class="my-4">Maintain a safe distance from others</h3>
+    <h2 class="text-2xl my-4 text-gray-900">No Bluetooth Devices Detected</h2>
     {{inline-svg "clipboard.svg" class="h-32 w-32"}}
-    <h3 class="my-4">No nearby devices detected</h3>
+    <h3 class="my-4">Maintain a Safe Spaced Distance</h3>
   </article>
   {{/if}}
 
   {{else}}
+  {{!-- Idle screen --}}
   <article class="mx-12 text-center flex flex-col justify-center items-center">
-    <h2 class="text-2xl my-4 text-gray-900">Reduce the spread of Covid-19</h2>
-    {{inline-svg "crowded.svg" class="h-32 w-32"}}
+    <h2 class="text-2xl my-4 text-gray-900">Space Out to Stop the Spread of COVID19</h2>
+    <button {{on "click" this.startScan}} type="button" class="hover:shadow-outline rounded">
+      {{inline-svg "crowded.svg" class="h-32 w-32"}}
+    </button>
     <h3 class="my-4">Scan for nearby devices</h3>
   </article>
   {{/if}}
-
 
 </main>
 
