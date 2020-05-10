@@ -23,13 +23,13 @@ export default class DeviceTracker {
         };
       }
     });
-    this.removeExpired();
+    this.removeExpired(devices);
   }
 
-  removeExpired() {
+  removeExpired(devices) {
     const keysToRemove = Object.keys(this.trackedDevices).filter(
       (deviceAddress) =>
-        new Date().getTime() - this.trackedDevices[deviceAddress].lastUpdated.getTime() > RESET_TIME
+        !devices.find((device) => device.address === deviceAddress)
     );
     keysToRemove.forEach((key) => delete this.trackedDevices[key]);
   }
@@ -39,5 +39,11 @@ export default class DeviceTracker {
       (device) =>
         this.trackedDevices[device.address].trackedTime > DEFAULT_TIME_LIMIT
     );
+  }
+
+  get devices() {
+    return {
+      ...this.trackedDevices,
+    };
   }
 }

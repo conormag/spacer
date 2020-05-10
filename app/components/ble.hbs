@@ -1,41 +1,93 @@
-<h3>Warning: {{ this.isWarnOn }}</h3>
-<h3>Advertising: {{this.bluetooth.advertisingStatus}}</h3>
-<h3>STATUS: {{this.scanStatus}} </h3>
-<div>
-  <span class="inline-flex rounded-md shadow-sm">
-    <button 
-    {{on "click" this.startScan}}
-    type="button" class="inline-flex items-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition ease-in-out duration-150">
-      Start Scan
-    </button>
-  </span>
+<main
+  class="px-4 py-8 overflow-y-auto {{if isScanning (if devicesInDistance.length 'bg-red-200' 'bg-green-100') 'bg-yellow-100' }}"
+  style="height: 75vh;">
 
-  <span class="inline-flex rounded-md shadow-sm">
-    <button 
-      {{on "click" this.stopScan}}
-      type="button" 
-      class="inline-flex items-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition ease-in-out duration-150">
-        Stop Scan
-    </button>
-  </span>
-</div>
-<ul>
-  {{#each devices as |device|}}
-    <li>
-      <div class="bg-white overflow-hidden shadow sm:rounded-lg">
-        <div class="border-b border-gray-200 px-4 py-5 sm:px-6">
-          {{if device.name device.name "Un-named Device"}}
-        </div>
-        <div class="px-4 py-5 sm:p-6">
-            address: {{device.address}}<br>
-            rssi: {{device.rssi}}<br>
-            mode: {{device.modeSignal}}<br>
-            txPowerLevels: {{device.txPowerLevel}}<br>
-            distance: {{device.distance}}m
-        </div>
-      </div>
+  {{#if isScanning}}
+  {{#if devicesInDistance.length}}
+  <article class="mx-12 text-center flex flex-col justify-center items-center">
+    <h2 class="text-2xl my-4 text-gray-900">High Risk</h2>
+    <h3 class="my-4">Move to a safe distance</h3>
+    {{inline-svg "high-risk.svg" class="h-32 w-32"}}
+    <h3 class="my-4">Nearby devices detected</h3>
+  </article>
+  <ul>
+    {{#each devicesInDistance as |device|}}
+    <li class="my-4 bg-white overflow-hidden shadow sm:rounded-lg bg-red-200">
+      <article class="px-4 py-5 sm:p-6">
+        <p class="font-bold text-gray-900">
+          {{ device.name }}
+        </p>
+        <p class="text-sm text-gray-700">
+          Distance: {{ device.distance }} m
+        </p>
+        <p class="text-sm text-gray-700">
+          Time in danger: {{ device.timeInDanger }} s
+        </p>
+      </article>
+
     </li>
-  {{/each}}
-</ul>
+    {{/each}}
+  </ul>
+
+  {{else}}
+  <article class="mx-12 text-center flex flex-col justify-center items-center">
+    <h2 class="text-2xl my-4 text-gray-900">Low Risk</h2>
+    <h3 class="my-4">Maintain a safe distance from others</h3>
+    {{inline-svg "clipboard.svg" class="h-32 w-32"}}
+    <h3 class="my-4">No nearby devices detected</h3>
+  </article>
+  {{/if}}
+
+  {{else}}
+  <article class="mx-12 text-center flex flex-col justify-center items-center">
+    <h2 class="text-2xl my-4 text-gray-900">Reduce the spread of Covid-19</h2>
+    {{inline-svg "crowded.svg" class="h-32 w-32"}}
+    <h3 class="my-4">Scan for nearby devices</h3>
+  </article>
+  {{/if}}
+
+
+</main>
+
+<footer class="border-t-2">
+  <ul class="flex flex-1 justify-center">
+    {{!-- <li class="flex flex-1 justify-center m-4">
+      <button type="button" class="flex flex-col items-center">
+        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+          <path
+            d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z" />
+        </svg>
+        <span>Info</span>
+      </button>
+    </li> --}}
+    <li class="flex flex-1 justify-center m-4">
+      {{#if this.isScanning}}
+      <button {{on "click" this.stopScan}} type="button" class="flex flex-col items-center">
+        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+          <path
+            d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm1.41-1.41A8 8 0 1 0 15.66 4.34 8 8 0 0 0 4.34 15.66zm9.9-8.49L11.41 10l2.83 2.83-1.41 1.41L10 11.41l-2.83 2.83-1.41-1.41L8.59 10 5.76 7.17l1.41-1.41L10 8.59l2.83-2.83 1.41 1.41z" />
+        </svg>
+        <span>Stop</span>
+      </button>
+      {{else}}
+      <button {{on "click" this.startScan}} type="button" class="flex flex-col items-center">
+        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+          <path d="M12.9 14.32a8 8 0 1 1 1.41-1.41l5.35 5.33-1.42 1.42-5.33-5.34zM8 14A6 6 0 1 0 8 2a6 6 0 0 0 0 12z" />
+        </svg>
+        <span>Scan</span>
+      </button>
+      {{/if}}
+    </li>
+    {{!-- <li class="flex flex-1 justify-center m-4">
+      <button type="button" class="flex flex-col items-center">
+        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+          <path
+            d="M17 6V5h-2V2H3v14h5v4h3.25H11a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6zm-5.75 14H3a2 2 0 0 1-2-2V2c0-1.1.9-2 2-2h12a2 2 0 0 1 2 2v4a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-5.75zM11 8v8h6V8h-6zm3 11a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
+        </svg>
+        <span>Devices</span>
+      </button>
+    </li> --}}
+  </ul>
+</footer>
 
 {{yield}}
