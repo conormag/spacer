@@ -84,15 +84,9 @@ export default class BleComponent extends Component {
     if (this.isWarnOn) {
       this.bluetooth.warn();
     }
-    const trackedDevices = this.deviceTracker.devices;
 
     this.devicesInDistance = this.devicesInDistance.map((device) => ({
-      ...device,
       name: device.name || device.address,
-      distance: device.distance.toFixed(2),
-      timeInDanger: trackedDevices[device.address].trackedTime
-        ? trackedDevices[device.address].trackedTime / 1000
-        : 0,
     }));
   }
 
