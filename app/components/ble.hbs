@@ -1,8 +1,16 @@
 <main
-  class="px-4 py-8 overflow-y-auto {{if isScanning (if devicesInDistance.length 'bg-red-200' 'bg-green-100') 'bg-yellow-100' }}"
+  class="px-4 py-8 overflow-y-auto {{if isScanning (if isPaused 'bg-yellow-100' (if devicesInDistance.length 'bg-red-200' 'bg-green-100')) 'bg-yellow-100' }}"
   style="height: 75vh;">
 
-  {{#if isScanning}}
+  {{#if this.isScanning}}
+  {{#if this.isPaused}}
+  {{!-- Paused screen --}}
+  <article class="mx-12 text-center flex flex-col justify-center items-center">
+    <h2 class="text-2xl my-4 text-gray-900">Space Out to Stop the Spread of COVID19</h2>
+    {{inline-svg "covid19.svg" class="h-32 w-32"}}
+    <h3 class="my-4">Scan Paused...</h3>
+  </article>
+  {{else}}
   {{#if devicesInDistance.length}}
   {{!-- High risk screen --}}
   <article class="mx-12 text-center flex flex-col justify-center items-center">
@@ -25,9 +33,12 @@
   <article class="mx-12 text-center flex flex-col justify-center items-center">
     <h2 class="text-2xl my-4 text-gray-900">No Bluetooth Devices Detected</h2>
     {{inline-svg "clipboard.svg" class="h-32 w-32"}}
-    <h3 class="my-4">Maintain a Safe Spaced Distance</h3>
+    <h3 class="mt-4 mb-2">Maintain a Safe Spaced Distance</h3>
+    <h3>&#x27f5; 2m &#x27f6;</h3>
   </article>
   {{/if}}
+  {{/if}}
+
 
   {{else}}
   {{!-- Idle screen --}}
@@ -71,6 +82,25 @@
       </button>
       {{/if}}
     </li>
+
+    {{#if this.isScanning}}
+    <li class="flex flex-1 justify-center m-4">
+      {{#if this.isPaused}}
+      <button {{on "click" this.startScan}} type="button" class="flex flex-col items-center">
+        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+          <path d="M4 4l12 6-12 6z" /></svg>
+        <span>Resume</span>
+      </button>
+      {{else}}
+      <button {{on "click" this.pauseScan}} type="button" class="flex flex-col items-center">
+        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+          <path d="M5 4h3v12H5V4zm7 0h3v12h-3V4z" /></svg>
+        <span>30 sec</span>
+      </button>
+      {{/if}}
+    </li>
+    {{/if}}
+
     {{!-- <li class="flex flex-1 justify-center m-4">
       <button type="button" class="flex flex-col items-center">
         <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
