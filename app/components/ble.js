@@ -5,9 +5,9 @@ import { inject as service } from '@ember/service';
 import Device from '../classes/device';
 import DeviceTracker from '../classes/devicetracker';
 
-const POLLING_INTERVAL = 5000;
+const POLLING_INTERVAL = 10000; // 10 sec
 const MAX_DISTANCE = 2;
-const PAUSE_TIME = 30000;
+const PAUSE_TIME = 300000; // 5 mins
 const SCAN_PARAMS = {
   services: [],
   allowDuplicates: true,

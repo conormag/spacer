@@ -1,5 +1,4 @@
-const DEFAULT_TIME_LIMIT = 30000; // 30 sec
-const RESET_TIME = 120000; // 2 mins
+const DEFAULT_TIME_LIMIT = 300000; // 5 mins
 
 export default class DeviceTracker {
   constructor(initialDevices = {}) {
