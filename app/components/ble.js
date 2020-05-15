@@ -5,9 +5,9 @@ import { inject as service } from '@ember/service';
 import Device from '../classes/device';
 import DeviceTracker from '../classes/devicetracker';
 
-const POLLING_INTERVAL = 10000; // 10 sec
+const POLLING_INTERVAL = 10000 / 2; // 10 sec
 const MAX_DISTANCE = 2;
-const PAUSE_TIME = 300000; // 5 mins
+const PAUSE_TIME = 300000 / 5; // 5 mins
 const SCAN_PARAMS = {
   services: [],
   allowDuplicates: true,
@@ -16,6 +16,7 @@ const SCAN_PARAMS = {
 export default class BleComponent extends Component {
   //@service('ember-cordova/events') events;
   @service bluetooth;
+  @service background;
 
   @tracked scanStatus;
   @tracked advertisingStatus;
@@ -78,6 +79,7 @@ export default class BleComponent extends Component {
   };
 
   handleDevicesInDistance() {
+    this.background.isEnabled();
     if (!this.devices) {
       return;
     }
@@ -92,11 +94,15 @@ export default class BleComponent extends Component {
 
     this.devicesInDistance = this.devicesInDistance.map((device) => ({
       name: device.name || device.address,
+      // distance: device.distance.toFixed(2),
+      // timeInDanger: this.deviceTracker.devices[device.address].trackedTime,
     }));
+    // console.table(this.devicesInDistance);
   }
 
   @action
   startScan() {
+    this.background.start();
     this.isPaused = false;
 
     this.handlePermissions();
@@ -115,7 +121,7 @@ export default class BleComponent extends Component {
   @action
   async pauseScan() {
     try {
-      await this.stopScan();
+      await this.stopScan({ stopBackground: false });
       this.isScanning = true;
       this.isPaused = true;
       clearTimeout(this.pauseId);
@@ -126,9 +132,13 @@ export default class BleComponent extends Component {
   }
 
   @action
-  async stopScan() {
+  async stopScan({ stopBackground = true } = {}) {
     clearInterval(this.distanceIntervalId);
     clearTimeout(this.pauseId);
+    // console.log('stop bg', stopBackground);
+    if (stopBackground) {
+      this.background.stop();
+    }
     this.isScanning = false;
     this.isPaused = false;
     try {

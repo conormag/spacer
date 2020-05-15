@@ -15,9 +15,12 @@
   "dependencies": {
     "cordova-android": "^8.1.0",
     "cordova-ios": "^5.1.1",
+    "cordova-plugin-background-mode": "^0.7.3",
     "cordova-plugin-background-mode-bluetooth-central": "^1.0.0",
+    "cordova-plugin-badge": "^0.8.8",
     "cordova-plugin-bluetooth-peripheral-usage-description": "^1.0.1",
     "cordova-plugin-bluetoothle": "^4.5.9",
+    "cordova-plugin-device": "^2.0.3",
     "cordova-plugin-splashscreen": "^5.0.3",
     "cordova-plugin-vibration": "^3.1.1",
     "cordova-plugin-wkwebview-engine": "^1.2.1"
@@ -35,7 +38,9 @@
       "cordova-plugin-bluetooth-peripheral-usage-description": {
         "TEXT": "Spacer would like to scan for devices"
       },
-      "cordova-plugin-background-mode-bluetooth-central": {}
+      "cordova-plugin-background-mode-bluetooth-central": {},
+      "cordova-plugin-background-mode": {},
+      "cordova-plugin-badge": {}
     },
     "platforms": [
       "ios",
