@@ -25,6 +25,18 @@
     <platform name="ios">
         <allow-intent href="itms:*"/>
         <allow-intent href="itms-apps:*"/>
+        <config-file target="*-Info.plist" parent="CFBundleURLTypes">
+        <array>
+            <dict>
+                <key>NSLocationWhenInUseUsageDescription</key>
+                <string>This application requires location services to work</string>
+            </dict>
+            <dict>
+                <key>NSLocationAlwaysUsageDescription</key>
+                <string>This application requires location services to work</string>
+            </dict>
+        </array>
+        </config-file>
     </platform>
     <allow-navigation href="http://192.168.1.1:4200" name="ec-nav"/>
 </widget>
